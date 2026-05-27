@@ -1,0 +1,52 @@
+fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Days Post-Stocking' } },
+                    y: { title: { display: true, text: 'Weight (g)' }, min: 0, max: 650 }
+                }
+            }
+        });
+
+        // Fungsi interaktif apabila slider digerakkan
+        document.getElementById('days-slider').addEventListener('input', function(e) {
+            const x = parseFloat(e.target.value);
+            
+            // Kira nilai f(x) dan f'(x) secara automatik
+            const fx = L / (1 + Math.exp(-k * (x - x0)));
+            const fPrimeX = (k * L * Math.exp(-k * (x - x0))) / Math.pow(1 + Math.exp(-k * (x - x0)), 2);
+            
+            let phase = "ACCELERATION PHASE";
+            let desc = "MINIMUM KINETIC PRODUCTIVITY";
+            
+            if (x >= 64 && x <= 72) {
+                phase = "PEAK LOG PHASE";
+                desc = "MAXIMUM KINETIC PRODUCTIVITY";
+            } else if (x > 72 && x < 120) {
+                phase = "DECELERATION PHASE";
+                desc = "SLOWING DOWN PRODUCTIVITY";
+            } else if (x >= 120) {
+                phase = "STATIONARY PHASE";
+                desc = "BATCH COMPLETE / SATURATION";
+            }
+
+            // Update UI teks
+            document.getElementById('days-display').innerText = x.toFixed(1);
+            document.getElementById('title-days-display').innerText = x.toFixed(1);
+            
+            document.getElementById('biomass-value').innerHTML = ${fx.toFixed(2)} <span class="unit">g</span>;
+            document.getElementById('biomass-formula').innerText = f(${x.toFixed(1)}) = ${fx.toFixed(2)} g;
+            
+            document.getElementById('growth-value').innerHTML = ${fPrimeX.toFixed(3)} <span class="unit">g/day</span>;
+            document.getElementById('growth-formula').innerText = f'(${x.toFixed(1)}) = ${fPrimeX.toFixed(3)} g/day;
+            
+            document.getElementById('phase-value').innerText = phase;
+            document.getElementById('phase-desc').innerText = desc;
+        });
+    </script>
+</body>
+</html>
